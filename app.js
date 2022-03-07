@@ -4,16 +4,18 @@ const cors = require('cors');
 var app = express();
 
 //Importaciones de rutas
-//Falta
+const usuarioRutas = require('./src/routes/usuario.routes')
+const categoriasRutas = require('./src/routes/categoria.routes');
 
 //Middlewares
-//Falta
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 //Cabeceras
 app.use(cors());
 
 //Carga de rutas
-//Falta
+app.use('/api', categoriasRutas, usuarioRutas);
 
 //Exportaciones
 module.exports = app;

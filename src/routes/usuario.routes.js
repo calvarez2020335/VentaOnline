@@ -9,6 +9,7 @@ const api = express.Router();
 api.post('/registrarCliente', [md_autenticacion.Auth, md_roles.verAdministrador], usuarioControlador.registrarUsuarios);
 api.post('/login', usuarioControlador.Login);
 api.put('/cambiarRol/:idUser', [md_autenticacion.Auth, md_roles.verAdministrador], usuarioControlador.cambiarRol);
-api.put('/editarUsuario/:idUser', md_autenticacion.Auth, usuarioControlador.editarUsuario);
+api.put('/editarUsuario/:idUser',md_autenticacion.Auth, usuarioControlador.editarUsuario);
+api.delete('/eliminarUsuario/:idUser', md_autenticacion.Auth, usuarioControlador.eliminarUsuario)
 
 module.exports = api;

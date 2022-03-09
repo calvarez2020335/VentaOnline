@@ -1,5 +1,5 @@
 exports.verClientes = function(req, res, next) {
-    if(req.user.rol !== "ROL_CLIENTE") return res.status(403).send({mensaje: "Solo puede acceder EL USUARIO"})
+    if(req.user.rol !== "ROL_CLIENTE") return res.status(403).send({mensaje: "Solo pueden acceder los clientes"})
     next();
 }
 

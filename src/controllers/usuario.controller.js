@@ -31,10 +31,8 @@ function registrarAdmin(req, res) {
 }
 
 function registrarUsuarios(req, res) {
-  
   var parametro = req.body;
   var usuarioModel = new Usuario();
-
 
   if (parametro.nombre && parametro.email && parametro.password) {
     usuarioModel.nombre = parametro.nombre;
@@ -69,22 +67,25 @@ function registrarUsuarios(req, res) {
         return res.status(500).send({ mensaje: "El correo ya esta en uso" });
       }
     });
-  }else{
-    return res.status(500).send({mensaje: "Debe de enviar los parametros obligatorios"})
+  } else {
+    return res
+      .status(500)
+      .send({ mensaje: "Debe de enviar los parametros obligatorios" });
   }
-
 }
 
 function cambiarRol(req, res) {
   var idUser = req.params.idUser;
   var parametros = req.body;
-  var usuarioModel = new Usuario();
 
-  Usuario.findByIdAndUpdate(idUser, parametros, { new: true }, (err, usuarioActualizado) => {
-
+  Usuario.findByIdAndUpdate(
+    idUser,
+    { $set: { rol: parametros.rol } },
+    { new: true },
+    (err, usuarioActualizado) => {
       if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
       if (!usuarioActualizado)
-        return res.status(500).send({ mensaje: "Error al editar el Usuario" });
+        return res.status(500).send({ mensaje: "Error al cambiar el rol" });
 
       return res.status(200).send({ usuario: usuarioActualizado });
     }
@@ -93,27 +94,95 @@ function cambiarRol(req, res) {
 
 function editarUsuario(req, res) {
   var idUser = req.params.idUser;
-  var parametros = req.body;    
+  var parametros = req.body;
 
-  if ( idUser !== req.user.sub ) return res.status(500)
-        .send({ mensaje: 'No puede editar otros usuarios'});
-   
-    Usuario.findByIdAndUpdate(
-      req.user.sub,
-      parametros,
-      { new: true },
-      (err, usuarioActualizado) => {
-        
+  Usuario.findOne({ _id: idUser }, (err, usuarioEncontrado) => {
+    if (req.user.rol == "ROL_ADMIN") {
+      if (usuarioEncontrado.rol !== "ROL_CLIENTE") {
+        return res
+          .status(403)
+          .send({ mensaje: "No se pueden editar a los Administradores" });
+      } else {
+        Usuario.findByIdAndUpdate(
+          idUser,
+          { $set: { nombre: parametros.nombre, email: parametros.email } },
+          { new: true },
+          (err, usuarioActualizado) => {
+            if (err)
+              return res.status(500).send({ mensaje: "Error en la peticion" });
+            if (!usuarioActualizado)
+              return res
+                .status(500)
+                .send({ mensaje: "Error al editar el Usuario" });
+
+            return res.status(200).send({ usuario: usuarioActualizado });
+          }
+        );
+      }
+    } else {
+      if (idUser !== req.user.sub)
+        return res
+          .status(500)
+          .send({ mensaje: "No puede editar otros clientes" });
+
+      Usuario.findByIdAndUpdate(
+        req.user.sub,
+        { $set: { nombre: parametros.nombre, email: parametros.email } },
+        { new: true },
+        (err, usuarioActualizado) => {
+          if (err)
+            return res.status(500).send({ mensaje: "Error en la peticion" });
+          if (!usuarioActualizado)
+            return res
+              .status(500)
+              .send({ mensaje: "Error al editar el Usuario" });
+
+          return res.status(200).send({ usuario: usuarioActualizado });
+        }
+      );
+    }
+  });
+}
+
+function eliminarUsuario(req, res) {
+  var idUser = req.params.idUser;
+
+  Usuario.findOne({ _id: idUser }, (err, usuarioEncontrado) => {
+    if (req.user.rol == "ROL_ADMIN") {
+      if (usuarioEncontrado.rol !== "ROL_CLIENTE") {
+        return res
+          .status(403)
+          .send({ mensaje: "No se pueden eliminar a los Administradores" });
+      } else {
+        Usuario.findByIdAndDelete(idUser, (err, usuarioEliminado) => {
+          if (err)
+            return res.status(500).send({ mensaje: "Error en la peticion" });
+          if (!usuarioEliminado)
+            return res
+              .status(403)
+              .send({ mensaje: "Error al eliminar el cliente" });
+
+          return res.status(200).send({ usuario: usuarioEliminado });
+        });
+      }
+    } else {
+      if (idUser !== req.user.sub)
+        return res
+          .status(500)
+          .send({ mensaje: "No puede eliminar a otros usuarios" });
+
+      Usuario.findByIdAndDelete(idUser, (err, usuarioEliminado) => {
         if (err)
           return res.status(500).send({ mensaje: "Error en la peticion" });
-        if (!usuarioActualizado)
+        if (!usuarioEliminado)
           return res
             .status(500)
             .send({ mensaje: "Error al editar el Usuario" });
 
-        return res.status(200).send({ usuario: usuarioActualizado });
-      }
-    );
+        return res.status(200).send({ usuario: usuarioEliminado });
+      });
+    }
+  });
 }
 
 function Login(req, res) {
@@ -158,5 +227,6 @@ module.exports = {
   registrarUsuarios,
   editarUsuario,
   cambiarRol,
-  Login
+  eliminarUsuario,
+  Login,
 };

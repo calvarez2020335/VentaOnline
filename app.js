@@ -5,7 +5,6 @@ var app = express();
 
 //Importaciones de rutas
 const usuarioRutas = require('./src/routes/usuario.routes')
-const categoriasRutas = require('./src/routes/categoria.routes');
 
 //Middlewares
 app.use(express.urlencoded({ extended: false }));
@@ -15,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 //Carga de rutas
-app.use('/api', categoriasRutas, usuarioRutas);
+app.use('/api', usuarioRutas);
 
 //Exportaciones
 module.exports = app;

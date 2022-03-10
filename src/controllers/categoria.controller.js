@@ -37,19 +37,33 @@ function agregarCategoria(req, res) {
 }
 
 function verCategorias(req, res) {
-    Categoria.find({}, (err, categoriaEncontrada) => {
-        return res.status(200).send({ Categorias: categoriaEncontrada });
-    })
+  Categoria.find({}, (err, categoriaEncontrada) => {
+    return res.status(200).send({ Categorias: categoriaEncontrada });
+  });
 }
 
-function editarCategoria(req, res){
+function editarCategoria(req, res) {
+  const idCategoria = req.params.idCateg;
+  const parametro = req.body;
 
-    
+  Categoria.findByIdAndUpdate(
+    idCategoria,
+    parametro,
+    { new: true },
+    (err, categoriaActualizada) => {
+      if (err) return res.status(403).send({ mensaje: "Error en la peticion" });
+      if (!categoriaActualizada)
+        return res
+          .status(500)
+          .send({ mensaje: "Error al editar la categoria" });
 
+      return res.status(200).send({ categoria: categoriaActualizada });
+    }
+  );
 }
 
-
-module.exports ={
-    agregarCategoria,
-    verCategorias
-}
+module.exports = {
+  agregarCategoria,
+  verCategorias,
+  editarCategoria
+};

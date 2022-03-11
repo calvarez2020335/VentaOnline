@@ -6,6 +6,7 @@ const ProductoSchema = Schema({
     nombreProducto: String,
     stock: Number,
     precio: Number,
+    ventas: Number,
     idCategoria: {type: Schema.Types.ObjectId, ref: 'Categorias'}
 
 });

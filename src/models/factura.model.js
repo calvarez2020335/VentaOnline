@@ -13,3 +13,5 @@ const FacturaSchema = Schema({
     fecha: {type: Date, default: Date.now()}
 
 })
+
+module.exports = mongoose.model('Facturas', FacturaSchema)

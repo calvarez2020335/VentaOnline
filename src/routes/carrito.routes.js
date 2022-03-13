@@ -5,6 +5,7 @@ const md_roles = require('../middlewares/roles')
 const api = express.Router();
 
 api.post('/agregarCarrito' ,[md_autenticacion.Auth, md_roles.verClientes], carritoController.agregarProductos)
+api.delete('/eliminarProductoCarrito/:idProductos', [md_autenticacion.Auth, md_roles.verClientes], carritoController.eliminarProductoCarrito)
 api.delete('/eliminarCarrito', [md_autenticacion.Auth, md_roles.verClientes], carritoController.eliminarCarrito)
 
 module.exports = api;

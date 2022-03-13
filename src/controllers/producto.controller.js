@@ -130,7 +130,7 @@ function productosMasVendidos(req, res) {
         productosVendidos.push(productoMasVendido)
       }
     }
-    if(productosVendidos.length == 0) return res.status(500).send({mensaje: "Este producto no se a vendido"})
+    if(productosVendidos.length == 0) return res.status(500).send({mensaje: "No se han tenido ventas"})
     return res.status(200).send({producto: productosVendidos})
 
   }).sort({ventas: -1}).populate('idCategoria').lean();

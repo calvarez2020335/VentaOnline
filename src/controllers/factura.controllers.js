@@ -7,37 +7,6 @@ const doc = new PDFDocument();
 
 function confirmarCompra(req, res) {
   const usuarioId = req.user.sub;
-  //PDFDocument
-  const tableTop = 270;
-  const itemCodeX = 50;
-  const descriptionX = 160;
-  const quantityX = 260;
-  const priceX = 400;
-
-  doc.pipe(fs.createWriteStream("facturasPDF/" + req.user.nombre + ".pdf"));
-  doc.fillColor("#444444").fontSize(32).text("Factura Electronica", {
-    align: "center",
-    bold: true,
-  });
-  doc
-    .fillColor("#444444")
-    .fontSize(32)
-    .text(req.user.nombre, { align: "center", bold: true, underline: true })
-    .moveDown();
-  //PDFDocument
-  //PDFDocument
-
-  doc
-  .fontSize(15)
-  .text("Nombre", itemCodeX, tableTop, { bold: true, underline: true })
-  .text("Cantidad", descriptionX, tableTop, {
-    bold: true,
-    underline: true,
-  })
-  .text("SubTotal", quantityX, tableTop, { bold: true, underline: true })
-  .text("Total", priceX, tableTop, { bold: true, underline: true });
-
-//PDFDocument
 
   Carrito.findOne({ usuario: usuarioId }, (err, buscarCarrito) => {
     if (buscarCarrito == null)
@@ -74,8 +43,6 @@ function confirmarCompra(req, res) {
       });
     }
   }).lean();
-
-  doc.end();
 }
 
 function vermisFacturas(req, res) {
